@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccess;
+using DataAccess.Interfaces;
 using Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,7 +30,13 @@ namespace GraphQL.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             services.AddDbContext<RealEstateDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:RealEstateDb"]));
+
+            services.AddTransient<IPropertyRepository, PropertyRepository>();
+
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
