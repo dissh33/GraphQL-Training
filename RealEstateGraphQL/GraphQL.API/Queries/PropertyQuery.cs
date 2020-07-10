@@ -13,7 +13,12 @@ namespace GraphQL.API.Queries
         {
             Field<ListGraphType<PropertyType>>(
                 "properties",
-                resolve: context => propertyRepository.GetAll());           
+                resolve: context => propertyRepository.GetAll());
+
+            Field<PropertyType>(
+                "property",
+                arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
+                resolve: context => propertyRepository.GetById(context.GetArgument<int>("id")));
         }
     }
 }
