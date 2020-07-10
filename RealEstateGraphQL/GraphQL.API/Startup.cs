@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using DataAccess;
 using DataAccess.Interfaces;
 using Database;
+using GraphiQl;
+using GraphQL.API.Queries;
+using GraphQL.API.Schema;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,8 +38,15 @@ namespace GraphQL.API
             services.AddDbContext<RealEstateDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:RealEstateDb"]));
 
             services.AddTransient<IPropertyRepository, PropertyRepository>();
+            services.AddTransient<IPaymentRepository, PaymentRepository>();
 
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<PropertyQuery>();
+            services.AddSingleton<PropertyType>();
+            services.AddSingleton<PaymentType>();
+
+            var sp = services.BuildServiceProvider();
+            services.AddSingleton<ISchema>(new RealEstateSchema(new FuncDependencyResolver(type => sp.GetService(type))));
 
         }
 
@@ -57,6 +68,8 @@ namespace GraphQL.API
             {
                 endpoints.MapControllers();
             });
+            app.UseGraphiQl();
+
             db.EnsureSeedData();
         }
     }

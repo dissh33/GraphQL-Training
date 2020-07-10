@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Database.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DataAccess.Interfaces
 {
-    class IPaymentRepository
+    public interface IPaymentRepository
     {
+        IEnumerable<Payment> GetAllForProperty(int propertyId);
+        IEnumerable<Payment> GetAllForProperty(int propertyId, int lastAmount);
     }
 }
